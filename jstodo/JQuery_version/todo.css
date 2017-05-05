@@ -1,0 +1,102 @@
+/**
+* @author Sruthi Gudibandi <gudibandisruthi@gmail.com>
+* @file: Css styles for todo application
+* @version 1.0
+*/
+/* Common css */
+html{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: smaller;
+}
+
+.strike{
+    text-decoration: line-through;
+}
+
+.hide{
+    display: none;
+}
+
+#editTaskInput{
+    width: 100px;
+}
+
+
+/* Task input area*/
+#addTask{
+    background-color: #23B574;   
+    color: #fff;
+    padding: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 2px;
+}
+
+input[name="taskInput"]{
+    padding: 3px;
+    border: 2px solid #8c8c8c;
+}
+
+
+/* Task panel or display area*/
+#taskPanel{
+    border: 2px solid #8c8c8c;
+    margin-top: 10px;
+    width: 220px;
+    min-height: 100px;
+    padding-bottom: 5px;
+}
+
+.taskRow{
+    padding: 3px 5px 3px 5px;
+    margin: 0px;
+    overflow: auto;
+}
+
+.taskRow > *{    
+    vertical-align: middle;
+}
+
+.taskAction{
+    float: right;
+    color: #26A9E3;
+    padding: 3px;
+}
+.taskAction span{
+    margin:4px;
+    cursor: pointer;
+}
+
+input[type="checkbox"]{
+    display: none;
+}
+
+label{
+    cursor: pointer;
+}
+
+/* Custom checkbox implemenattion */
+input[type="checkbox"] + label:before{
+    border: 1px solid #DADADA;
+    content: "\00a0";  
+    height: 15px;
+    width: 15px;
+    display: inline-block;    
+    vertical-align: top;
+    margin: 0 3px 0 0;
+    font-size: 14px;
+    background-color: #26A9E3;
+    font-weight: bolder;    
+}
+
+input[type="checkbox"]:checked + label:before{
+    color: #fff;
+    background: #26A9E3;
+    content: "\2713";   
+    text-align: center;    
+}
+
+input[type="checkbox"]:checked + label{
+    text-decoration: line-through;
+}
