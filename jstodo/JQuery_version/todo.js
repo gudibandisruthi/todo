@@ -25,6 +25,10 @@
         "hiddenTaskDiv": "hiddenTaskDiv",
         "editTaskInput": "editTaskInput"
     };
+    todo.classInfo = {
+        "taskRow": "taskRow",
+        "taskAction": "taskAction"
+    }
     /**
     * @module events - All the events associated with todo module 
     */
@@ -52,18 +56,18 @@
         * Event listener function when the user clicks on edit of a task    
         */
         clickOnEdit = function () {
-            var eAction = this.parentElement;
-            var eTaskText = eAction.previousElementSibling;
-            var sTaskText = eTaskText.textContent;
-            var eTaskRow = eAction.parentElement;            
-            var eEditInput = document.getElementById(todo.idInfo.editTaskInput);
+            var $TaskRow = $(this).parents("." + todo.classInfo.taskRow); 
+            var $Action = $TaskRow.children("." + todo.classInfo.taskAction);
+            var $TaskText = $TaskRow.children("label");
+            var sTaskText = $TaskText.text();            
+            var $EditInput = $("#" + todo.idInfo.editTaskInput);            
             // If one of the tasks is already being edited, other tasks should not be editable
-            if(eEditInput.parentElement.className !== "taskRow"){
-                eTaskText.textContent = ""; // clears the task text currently displayed in the row 
-                eEditInput.addEventListener("keyup", enterOnEditInput, false); 
-                eEditInput.value = sTaskText;
-                eTaskRow.insertBefore(eEditInput, eAction);
-                this.removeEventListener("click", clickOnEdit, false);
+            if($EditInput.parent().attr("class") !== "taskRow"){
+                $TaskText.text(""); // clears the task text currently displayed in the row 
+                $EditInput.on("keyup", enterOnEditInput); 
+                $EditInput.val(sTaskText);
+                $EditInput.insertBefore($Action);
+                $(this).unbind("click");
             }            
         };
         /**
@@ -72,17 +76,17 @@
         */
         enterOnEditInput = function (e) {
             // May be we can check th ekey before and call this function when only enter is pressed
-            if (e.keyCode === 13) { // checks if the button presses is 'enter'
-                var sTaskText = this.value;
-                var eTaskText = this.previousElementSibling;
-                var eEdit = this.nextElementSibling.firstChild;
-                var eHiddenTaskDiv = document.getElementById(todo.idInfo.hiddenTaskDiv);
+            if (e.keyCode === 13) { // checks if the button pressed is 'enter'                
+                var $TaskRow = $(this).parents("." + todo.classInfo.taskRow);
+                var $TaskText = $TaskRow.children("label");
+                var sTaskText = $(this).val();
+                var $Edit = $TaskRow.children("." + todo.classInfo.taskAction).children().first();
+                var $HiddenTaskDiv = $("#" + todo.idInfo.hiddenTaskDiv);
                 if (isValidInput(sTaskText)) { // Adds only if the input is not empty
-                    eTaskText.textContent = sTaskText;
-                    eTaskText.classList.remove("hide");
-                    this.value = "";
-                    eHiddenTaskDiv.appendChild(this);
-                    eEdit.addEventListener("click", clickOnEdit, false);
+                    $TaskText.text(sTaskText);                    
+                    $(this).value = "";
+                    $HiddenTaskDiv.append($(this));
+                    $Edit.on("click", clickOnEdit);
                 }
                 /*else{
                     // can highlight inputbox with red or display proper message to fill in the input box
@@ -93,16 +97,16 @@
         * EVent listener function when the user clicks on delete for a task
         */
         clickOnDelete = function () {
-            var eAction = this.parentElement;
-            var etaskRow = eAction.parentElement;
+            var $TaskRow = $(this).parents("." + todo.classInfo.taskRow);
+            var $Action = $TaskRow.children("." + todo.classInfo.taskAction);            
             // @todo implement a confirmation for deleting a task
-            var eHiddenTaskDiv = document.getElementById(todo.idInfo.hiddenTaskDiv);
-            var eEditInput = document.getElementById(todo.idInfo.editTaskInput);
+            var $HiddenTaskDiv = $("#" + todo.idInfo.hiddenTaskDiv);
+            var $EditInput = $("#" + todo.idInfo.editTaskInput);
             // If the task being deleted is already being edited, editinput box is moved back to the hidden div element before deleteing the entire row
-            if(eAction.previousSibling.id === "editTaskInput"){
-                eHiddenTaskDiv.appendChild(eEditInput);                 
+            if($Action.siblings(todo.idInfo.editTaskInput).length > 0){
+                $HiddenTaskDiv.append($EditInput);                 
             }            
-            etaskRow.remove(); 
+            $TaskRow.remove(); 
         };
         /**
         * creates and returns a html structure for a task row
@@ -114,10 +118,10 @@
             var jRow = {
                 "tagName": "p",
                 "jAttributes": {
-                    "className": "taskRow"
+                    "class": "taskRow"
                 }
             };
-            var eTaskRow = todo.utils.newDomElement(jRow);
+            var $TaskRow = todo.utils.newDomElement(jRow);
             var jTaskCheckbox = {
                 "tagName": "input",
                 "jAttributes": {
@@ -127,41 +131,41 @@
                     "name": "taskCheckbox"
                 }
             };
-            var eTaskCheckbox = todo.utils.newDomElement(jTaskCheckbox);
+            var $TaskCheckbox = todo.utils.newDomElement(jTaskCheckbox);
             var jTaskText = {
                 "tagName": "label",
                 "jAttributes": {
-                    "innerText": sInputText
+                    "text": sInputText
                 }
             };
-            var eTaskText = todo.utils.newDomElement(jTaskText);
-            eTaskText.setAttribute("for", sTaskId);
+            var $TaskText = todo.utils.newDomElement(jTaskText);
+            $TaskText.attr("for", sTaskId);
             var jEdit = {
                 "tagName": "span",
                 "jAttributes": {
-                    "innerText": "edit"
+                    "text": "edit"
                 }
             };
-            var eEdit = todo.utils.newDomElement(jEdit);
-            eEdit.addEventListener("click", clickOnEdit, false);
+            var $Edit = todo.utils.newDomElement(jEdit);
+            $Edit.on("click", clickOnEdit);
             var jDelete = {
                 "tagName": "span",
                 "jAttributes": {
-                    "innerText": "delete"
+                    "text": "delete"
                 }
             };
-            var eDelete = todo.utils.newDomElement(jDelete);
-            eDelete.addEventListener("click", clickOnDelete, false);
+            var $Delete = todo.utils.newDomElement(jDelete);
+            $Delete.on("click", clickOnDelete);
             var jTaskAction = {
                 "tagName": "span",
                 "jAttributes": {
-                    "className": "taskAction"
+                    "class": "taskAction"
                 }
             };
-            var eTaskAction = todo.utils.newDomElement(jTaskAction);
-            eTaskAction.append(eEdit, "|", eDelete);
-            eTaskRow.append(eTaskCheckbox, eTaskText, eTaskAction);
-            return eTaskRow;
+            var $TaskAction = todo.utils.newDomElement(jTaskAction);
+            $TaskAction.append($Edit, "|", $Delete);
+            $TaskRow.append($TaskCheckbox, $TaskText, $TaskAction);
+            return $TaskRow;
         };
         /**
         * Event listener function when user enters an input and presses enter button or clicks 'Add'
@@ -169,23 +173,23 @@
         */
         addNewRow = function (e) {
             if ((e.type === "click" && e.target.id === todo.idInfo.addButton) || (e.keyCode !== undefined && e.keyCode === 13)) {
-                var eInput = document.getElementsByName("taskInput")[0];
-                var eTaskPanel = document.getElementById(todo.idInfo.taskPanel);
-                var sInputText = eInput.value;
+                var $Input = $("input[name='taskInput']");
+                var $TaskPanel = $("#" + todo.idInfo.taskPanel);
+                var sInputText = $Input.val();
                 if (isValidInput(sInputText)) {
-                    var eTaskRow = getTaskRow(sInputText);
-                    eTaskPanel.appendChild(eTaskRow);
+                    var $TaskRow = getTaskRow(sInputText);
+                    $TaskPanel.append($TaskRow);
                 }
-                eInput.value = "";
+                $Input.val("");
             }
         };
         return {
             init: function () {
                 // Adds initial event listeners to the input text box and 'Add' button
-                var eTaskAdd = document.getElementById(todo.idInfo.addButton);
-                eTaskAdd.addEventListener("click", addNewRow, false);
-                var eTaskInput = document.getElementsByName("taskInput")[0];
-                eTaskInput.addEventListener("keyup", addNewRow, false);
+                var $TaskAdd = $("#" + todo.idInfo.addButton);
+                $TaskAdd.on("click", addNewRow);
+                var $TaskInput = $("input[name='taskInput']");
+                $TaskInput.on("keyup", addNewRow);                
             }
         };
     }());
@@ -201,23 +205,15 @@
             * @returns new dom element created
             */
             newDomElement: function (jInfo) {
-                var eNewEle = document.createElement(jInfo.tagName);
-                Object.keys(jInfo.jAttributes).forEach(function (sAttr) {
-                    if (sAttr === "className") {
-                        eNewEle.classList.add(jInfo.jAttributes[sAttr]);
-                    } else {
-                        eNewEle[sAttr] = jInfo.jAttributes[sAttr];
-                    }
-                });
-                return eNewEle;
+                var $NewEle = $("<" + jInfo.tagName + ">", jInfo.jAttributes);                
+                return $NewEle;
             },
             /** 
             * integers are used as id's for each task
             * @returns {0|maxid}, 0 if there are no tasks, int(id) + 1 of the last task displayed
             */
-            getMaxTaskId: function () {
-                var iTaskCounter = document.getElementsByClassName("taskRow").length;
-                var iMaxTask = document.getElementsByClassName("taskRow")[iTaskCounter - 1].firstChild.id;
+            getMaxTaskId: function () {                
+                var iMaxTask = $("." + todo.classInfo.taskRow + ":last").children("input[type='checkbox']").attr("id");
                 var iTaskId;
                 if (Number.isNaN(iMaxTask) || (iMaxTask === undefined)) {
                     iTaskId = 0;
@@ -231,10 +227,10 @@
     /**
     * Adding global event listener for error handling
     */
-    $.oner("error", function (e) {
-        var sError = e.error;
-        console.log(sError); // Can be saved to server logs instead
-    });
+    $(window).on("error", function (e) {
+        var sError = e.originalEvent.error;
+        console.log(sError); // Can be saved to server logs instead        
+    });   
     /**
     * Initializing the todo application
     */
