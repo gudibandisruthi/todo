@@ -11,7 +11,7 @@
     /* jslint
         this, es6
     */
-    /** 
+    /**
     * namespace for todo application
     * @namespace todo
     */
@@ -28,9 +28,9 @@
     todo.classInfo = {
         "taskRow": "taskRow",
         "taskAction": "taskAction"
-    }
+    };
     /**
-    * @module events - All the events associated with todo module 
+    * @module events - All the events associated with todo module
     */
     todo.events = (function () {
         var isValidInput;
@@ -53,22 +53,22 @@
             }
         };
         /**
-        * Event listener function when the user clicks on edit of a task    
+        * Event listener function when the user clicks on edit of a task
         */
         clickOnEdit = function () {
-            var $TaskRow = $(this).parents("." + todo.classInfo.taskRow); 
+            var $TaskRow = $(this).parents("." + todo.classInfo.taskRow);
             var $Action = $TaskRow.children("." + todo.classInfo.taskAction);
             var $TaskText = $TaskRow.children("label");
-            var sTaskText = $TaskText.text();            
-            var $EditInput = $("#" + todo.idInfo.editTaskInput);            
+            var sTaskText = $TaskText.text();
+            var $EditInput = $("#" + todo.idInfo.editTaskInput);
             // If one of the tasks is already being edited, other tasks should not be editable
-            if($EditInput.parent().attr("class") !== "taskRow"){
-                $TaskText.text(""); // clears the task text currently displayed in the row 
-                $EditInput.on("keyup", enterOnEditInput); 
+            if ($EditInput.parent().attr("class") !== "taskRow") {
+                $TaskText.text(""); // clears the task text currently displayed in the row
+                $EditInput.on("keyup", enterOnEditInput);
                 $EditInput.val(sTaskText);
                 $EditInput.insertBefore($Action);
                 $(this).unbind("click");
-            }            
+            }
         };
         /**
         * Event listener function when the user fills in the text box on edit and presses, enter
@@ -76,14 +76,14 @@
         */
         enterOnEditInput = function (e) {
             // May be we can check th ekey before and call this function when only enter is pressed
-            if (e.keyCode === 13) { // checks if the button pressed is 'enter'                
+            if (e.keyCode === 13) { // checks if the button pressed is 'enter'
                 var $TaskRow = $(this).parents("." + todo.classInfo.taskRow);
                 var $TaskText = $TaskRow.children("label");
                 var sTaskText = $(this).val();
                 var $Edit = $TaskRow.children("." + todo.classInfo.taskAction).children().first();
                 var $HiddenTaskDiv = $("#" + todo.idInfo.hiddenTaskDiv);
                 if (isValidInput(sTaskText)) { // Adds only if the input is not empty
-                    $TaskText.text(sTaskText);                    
+                    $TaskText.text(sTaskText);
                     $(this).value = "";
                     $HiddenTaskDiv.append($(this));
                     $Edit.on("click", clickOnEdit);
@@ -98,15 +98,15 @@
         */
         clickOnDelete = function () {
             var $TaskRow = $(this).parents("." + todo.classInfo.taskRow);
-            var $Action = $TaskRow.children("." + todo.classInfo.taskAction);            
+            var $Action = $TaskRow.children("." + todo.classInfo.taskAction);
             // @todo implement a confirmation for deleting a task
             var $HiddenTaskDiv = $("#" + todo.idInfo.hiddenTaskDiv);
             var $EditInput = $("#" + todo.idInfo.editTaskInput);
             // If the task being deleted is already being edited, editinput box is moved back to the hidden div element before deleteing the entire row
-            if($Action.siblings(todo.idInfo.editTaskInput).length > 0){
-                $HiddenTaskDiv.append($EditInput);                 
-            }            
-            $TaskRow.remove(); 
+            if ($Action.siblings(todo.idInfo.editTaskInput).length > 0) {
+                $HiddenTaskDiv.append($EditInput);
+            }
+            $TaskRow.remove();
         };
         /**
         * creates and returns a html structure for a task row
@@ -169,7 +169,7 @@
         };
         /**
         * Event listener function when user enters an input and presses enter button or clicks 'Add'
-        * @param event 
+        * @param event
         */
         addNewRow = function (e) {
             if ((e.type === "click" && e.target.id === todo.idInfo.addButton) || (e.keyCode !== undefined && e.keyCode === 13)) {
@@ -189,7 +189,7 @@
                 var $TaskAdd = $("#" + todo.idInfo.addButton);
                 $TaskAdd.on("click", addNewRow);
                 var $TaskInput = $("input[name='taskInput']");
-                $TaskInput.on("keyup", addNewRow);                
+                $TaskInput.on("keyup", addNewRow);
             }
         };
     }());
@@ -205,14 +205,14 @@
             * @returns new dom element created
             */
             newDomElement: function (jInfo) {
-                var $NewEle = $("<" + jInfo.tagName + ">", jInfo.jAttributes);                
+                var $NewEle = $("<" + jInfo.tagName + ">", jInfo.jAttributes);
                 return $NewEle;
             },
-            /** 
+            /**
             * integers are used as id's for each task
             * @returns {0|maxid}, 0 if there are no tasks, int(id) + 1 of the last task displayed
             */
-            getMaxTaskId: function () {                
+            getMaxTaskId: function () {
                 var iMaxTask = $("." + todo.classInfo.taskRow + ":last").children("input[type='checkbox']").attr("id");
                 var iTaskId;
                 if (Number.isNaN(iMaxTask) || (iMaxTask === undefined)) {
@@ -229,8 +229,8 @@
     */
     $(window).on("error", function (e) {
         var sError = e.originalEvent.error;
-        console.log(sError); // Can be saved to server logs instead        
-    });   
+        console.log(sError); // Can be saved to server logs instead
+    });
     /**
     * Initializing the todo application
     */
